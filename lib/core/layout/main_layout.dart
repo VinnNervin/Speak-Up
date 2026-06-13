@@ -1,4 +1,3 @@
-import 'package:first_app/core/layout/placeholder_page.dart';
 import 'package:first_app/core/widgets/HomepageNavgation/homepage_navigation.dart';
 import 'package:first_app/features/adventure/pages/adventure_layout.dart';
 import 'package:first_app/features/home/pages/home_page.dart';
@@ -21,7 +20,6 @@ class _MainLayoutState extends State<MainLayout> {
     const HomePage(),
     const AdventureLayout(),
     const MissionPage(),
-    const PlaceholderPage(),
     const ProfilePage(),
   ];
 

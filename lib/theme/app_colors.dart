@@ -27,8 +27,6 @@ class AppColors {
   static const primaryAccent = blueAccent;
   static const primaryLight = blueLight;
 
-  // static const mainBgColor = Color.fromARGB(255, 237, 220, 255);
-
   static const secondary = Color.fromARGB(255, 95, 212, 5);
   static const secondaryAccent = Color.fromARGB(255, 138, 242, 59);
   static const secondaryLight = Color.fromARGB(255, 220, 250, 198);
