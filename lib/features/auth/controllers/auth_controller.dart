@@ -1,3 +1,4 @@
+import 'package:first_app/core/storage/local_storage_service.dart';
 import 'package:first_app/features/auth/models/signin_request_model.dart';
 import 'package:first_app/features/auth/models/signup_request_model.dart';
 import 'package:first_app/features/auth/models/user_model.dart';
@@ -6,7 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:form_validators_plus/form_validators_plus.dart';
 
 class AuthController with ChangeNotifier {
-  final AuthServices _authService = AuthServices();
+  final AuthServices _authService;
+
+  AuthController({required LocalStorageService storage}) : _authService = AuthServices(storage);
+
+  // final AuthServices _authService = AuthServices();
 
   bool _isLoading = false;
   UserModel? _user;
@@ -35,19 +40,14 @@ class AuthController with ChangeNotifier {
     }
 
     try {
-      final result = await _authService.login(
-        SigninRequestModel(email: email, password: password),
-      );
+      final result = await _authService.login(SigninRequestModel(email: email, password: password));
 
       if (result != null) {
         _user = result;
         _updateState(isLoading: false, errorMsg: null);
         return true;
       } else {
-        _updateState(
-          isLoading: false,
-          errorMsg: "Email atau Kata sandi salah.",
-        );
+        _updateState(isLoading: false, errorMsg: "Email atau Kata sandi salah.");
         return false;
       }
     } catch (e, stackTrace) {
@@ -79,10 +79,7 @@ class AuthController with ChangeNotifier {
     }
 
     if (password != confirmPassword) {
-      _updateState(
-        isLoading: false,
-        errorMsg: "Kata sandi dan Konfirmasi kata sandi tidak cocok.",
-      );
+      _updateState(isLoading: false, errorMsg: "Kata sandi dan Konfirmasi kata sandi tidak cocok.");
       return false;
     }
 
@@ -109,6 +106,21 @@ class AuthController with ChangeNotifier {
       _updateState(isLoading: false, errorMsg: 'terjadi kesalahan jaringan.');
 
       return false;
+    }
+  }
+
+  Future<void> loadUserSession() async {
+    _updateState(isLoading: true);
+
+    try {
+      final savedUser = await _authService.getSavedUser();
+      if (savedUser != null) {
+        _user = savedUser;
+      }
+    } catch (e) {
+      debugPrint("Gagal memuat sesi user: $e");
+    } finally {
+      _updateState(isLoading: false);
     }
   }
 }

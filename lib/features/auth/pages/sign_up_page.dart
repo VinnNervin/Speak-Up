@@ -12,7 +12,6 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
-  // final AuthController _controller = AuthController();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -31,9 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (success) {
       Navigator.popAndPushNamed(context, '/');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Berhasil membuat akun')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Berhasil membuat akun')));
     } else {
       final errorMsg = context.read<AuthController>().errorMsg;
       ScaffoldMessenger.of(

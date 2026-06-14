@@ -6,11 +6,7 @@ class HomepageNavigation extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const HomepageNavigation({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const HomepageNavigation({super.key, required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +21,7 @@ class HomepageNavigation extends StatelessWidget {
             _bulilNavItem(1, Icons.menu_book),
             _bulilNavItem(2, LucideIcons.dumbbell),
             _bulilNavItem(3, Icons.account_circle_outlined),
+            _bulilNavItem(4, Icons.account_circle_outlined),
           ],
         ),
       ),
@@ -44,11 +41,7 @@ class HomepageNavigation extends StatelessWidget {
           color: isActive ? AppColors.white : Colors.transparent,
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
-        child: Icon(
-          icon,
-          color: isActive ? AppColors.primary : AppColors.primaryAccent,
-          size: 30,
-        ),
+        child: Icon(icon, color: isActive ? AppColors.primary : AppColors.primaryAccent, size: 30),
       ),
     );
   }

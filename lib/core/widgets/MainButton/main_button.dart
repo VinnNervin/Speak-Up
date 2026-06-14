@@ -18,11 +18,7 @@ class MainButton extends StatefulWidget {
     return MainButton(
       key: key,
       onPressed: onPressed,
-      config: config.copyWith(
-        icon: icon,
-        iconSize: iconSize,
-        iconColor: iconColor,
-      ),
+      config: config.copyWith(icon: icon, iconSize: iconSize, iconColor: iconColor),
     );
   }
 
@@ -52,10 +48,7 @@ class _MainButtonState extends State<MainButton> {
         decoration: BoxDecoration(
           color: widget.config.backgroundColor,
           border: widget.config.borderWidth > 0
-              ? Border.all(
-                  color: widget.config.borderColor,
-                  width: widget.config.borderWidth,
-                )
+              ? Border.all(color: widget.config.borderColor, width: widget.config.borderWidth)
               : null,
           borderRadius: BorderRadius.circular(20),
           boxShadow: _isPressed
