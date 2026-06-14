@@ -2,54 +2,113 @@ import 'package:first_app/features/auth/models/signin_request_model.dart';
 import 'package:first_app/features/auth/models/signup_request_model.dart';
 import 'package:first_app/features/auth/models/user_model.dart';
 import 'package:first_app/features/auth/services/auth_services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:form_validators_plus/form_validators_plus.dart';
 
-class AuthController {
+class AuthController with ChangeNotifier {
   final AuthServices _authService = AuthServices();
 
-  bool isLoading = false;
-  UserModel? user;
+  bool _isLoading = false;
+  UserModel? _user;
+  String? _errorMSg;
 
-  Future<bool> login(String email, String password) async {
-    isLoading = true;
+  bool get isLoading => _isLoading;
+  UserModel? get user => _user;
+  String? get errorMsg => _errorMSg;
 
-    final result = await _authService.login(
-      SigninRequestModel(email: email, password: password),
-    );
+  void _updateState({required bool isLoading, String? errorMsg}) {
+    _isLoading = isLoading;
+    _errorMSg = errorMsg;
+    notifyListeners();
+  }
 
-    isLoading = false;
+  Future<bool> login(String inputEmail, String inputPassword) async {
+    String email = inputEmail.trim();
+    String password = inputPassword.trim();
+    _updateState(isLoading: true);
 
-    if (result != null) {
-      user = result;
-      return true;
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    if (!email.isValidEmail) {
+      _updateState(isLoading: false, errorMsg: 'Email tidak valid.');
+      return false;
     }
 
-    return false;
+    try {
+      final result = await _authService.login(
+        SigninRequestModel(email: email, password: password),
+      );
+
+      if (result != null) {
+        _user = result;
+        _updateState(isLoading: false, errorMsg: null);
+        return true;
+      } else {
+        _updateState(
+          isLoading: false,
+          errorMsg: "Email atau Kata sandi salah.",
+        );
+        return false;
+      }
+    } catch (e, stackTrace) {
+      debugPrint(stackTrace.toString());
+      _updateState(isLoading: false, errorMsg: "Terjadi kesalahan jaringan.");
+
+      return false;
+    }
   }
 
   Future<bool> signUp(
-    String name,
-    String email,
-    String password,
-    String confirmPassword,
+    String inputName,
+    String inputEmail,
+    String inputPassword,
+    String inputConfirmPassword,
   ) async {
-    isLoading = true;
+    String name = inputName.trim();
+    String email = inputEmail.trim();
+    String password = inputPassword.trim();
+    String confirmPassword = inputConfirmPassword.trim();
 
-    final result = await _authService.signUp(
-      SignupRequestModel(
-        name: name,
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword,
-      ),
-    );
+    _updateState(isLoading: true);
 
-    isLoading = false;
+    await Future.delayed(const Duration(milliseconds: 1000));
 
-    if (result != null) {
-      user = result;
-      return true;
+    if (!email.isValidEmail) {
+      _updateState(isLoading: false, errorMsg: 'Email tidak valid.');
+      return false;
     }
 
-    return false;
+    if (password != confirmPassword) {
+      _updateState(
+        isLoading: false,
+        errorMsg: "Kata sandi dan Konfirmasi kata sandi tidak cocok.",
+      );
+      return false;
+    }
+
+    try {
+      final result = await _authService.signUp(
+        SignupRequestModel(
+          name: name,
+          email: email,
+          password: password,
+          confirmPassword: confirmPassword,
+        ),
+      );
+
+      if (result != null) {
+        _user = result;
+        _updateState(isLoading: false);
+        return true;
+      } else {
+        _updateState(isLoading: false, errorMsg: "ada yang salah");
+        return false;
+      }
+    } catch (e, stackTrace) {
+      debugPrint(stackTrace.toString());
+      _updateState(isLoading: false, errorMsg: 'terjadi kesalahan jaringan.');
+
+      return false;
+    }
   }
 }

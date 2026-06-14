@@ -45,16 +45,14 @@ class AuthTextfield extends StatelessWidget {
               Text(
                 additionalText,
                 textDirection: TextDirection.ltr,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.primary),
               ),
           ],
         ),
         SizedBox(height: 8),
-        TextField(
+        TextFormField(
           controller: controller,
+          validator: validator,
           obscureText: obscureText,
           keyboardType: keyboardType,
           autocorrect: autocorrect,

@@ -1,6 +1,7 @@
 import 'package:first_app/features/auth/controllers/auth_controller.dart';
 import 'package:first_app/features/auth/widgets/login_form.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -10,28 +11,29 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final AuthController _controller = AuthController();
-
+  final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   void _handleSignIn() async {
-    final success = await _controller.login(
+    if (!_formKey.currentState!.validate()) return;
+
+    final success = await context.read<AuthController>().login(
       emailController.text,
       passwordController.text,
     );
 
+    if (!mounted) return;
+
     if (success) {
       Navigator.popAndPushNamed(context, '/home');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Berhasil Login')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login failed. Check your email or password'),
-        ),
-      );
+      final errorMsg = context.read<AuthController>().errorMsg;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMsg ?? 'Login failed')));
     }
-
-    setState(() {});
   }
 
   @override
@@ -43,6 +45,8 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthController>();
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -56,7 +60,9 @@ class _SignInPageState extends State<SignInPage> {
         alignment: Alignment.bottomCenter,
         child: SingleChildScrollView(
           child: LoginForm(
+            formKey: _formKey,
             emailController: emailController,
+            isLoading: authProvider.isLoading,
             passwordController: passwordController,
             onSubmit: _handleSignIn,
           ),

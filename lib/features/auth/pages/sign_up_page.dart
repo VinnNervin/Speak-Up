@@ -1,6 +1,7 @@
 import 'package:first_app/features/auth/controllers/auth_controller.dart';
 import 'package:first_app/features/auth/widgets/login_form.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -10,30 +11,34 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final AuthController _controller = AuthController();
-
+  final _formKey = GlobalKey<FormState>();
+  // final AuthController _controller = AuthController();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
   void _handleSignUp() async {
-    final success = await _controller.signUp(
+    if (!_formKey.currentState!.validate()) return;
+    final success = await context.read<AuthController>().signUp(
       nameController.text,
       emailController.text,
       confirmPasswordController.text,
       passwordController.text,
     );
 
+    if (!mounted) return;
+
     if (success) {
-      // Navigator.popAndPushNamed(context, '/');
+      Navigator.popAndPushNamed(context, '/');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Sign Up success')));
+      ).showSnackBar(SnackBar(content: Text('Berhasil membuat akun')));
     } else {
+      final errorMsg = context.read<AuthController>().errorMsg;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('login failed')));
+      ).showSnackBar(SnackBar(content: Text(errorMsg ?? 'Sign Up failed')));
     }
 
     setState(() {});
@@ -62,6 +67,7 @@ class _SignUpPageState extends State<SignUpPage> {
         height: double.infinity,
         alignment: Alignment.bottomCenter,
         child: LoginForm(
+          formKey: _formKey,
           nameController: nameController,
           emailController: emailController,
           passwordController: passwordController,
