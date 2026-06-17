@@ -1,27 +1,31 @@
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
-  final SharedPreferences _preferences;
+  final Map<String, dynamic> _memoryDb = {};
 
-  LocalStorageService(this._preferences);
+  LocalStorageService(dynamic _);
 
   Future<bool> setString(String key, String value) async {
-    return await _preferences.setString(key, value);
+    _memoryDb[key] = value;
+    return true;
   }
 
   String? getString(String key) {
-    return _preferences.getString(key);
+    return _memoryDb[key] as String?;
   }
 
   Future<bool> remove(String key) async {
-    return await _preferences.remove(key);
+    _memoryDb.remove(key);
+    return true;
   }
 
   Future<bool> setBool(String key, bool value) async {
-    return await _preferences.setBool(key, value);
+    _memoryDb[key] = value;
+    return true;
   }
 
-  bool? getBool(String key, String value) {
-    return _preferences.getBool(key);
+  bool? getBool(String key, [String? value]) {
+    return _memoryDb[key] as bool?;
   }
 }
+
